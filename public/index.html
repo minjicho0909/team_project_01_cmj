@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>중고거래 피해 대응 길잡이</title>
+  <meta name="description" content="중고거래 피해 상황을 사기·분쟁으로 가려 먼저 갈 기관과 증거 정리표를 안내하는 시제품" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23FF6000'/%3E%3Cpath d='M10 9l7 7-7 7' stroke='white' stroke-width='3.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="proto-bar" role="note">공공행정 프로젝트 시제품입니다 — 실제 온라인피해 365센터 서비스가 아닙니다.</div>
+
+  <div class="shell">
+    <!-- 안내 영역 -->
+    <aside class="guide" aria-label="이용 안내">
+      <div class="guide-head">
+        <p class="eyebrow">온라인피해 365센터 상담 지원 도구(제안)</p>
+        <h1 class="brand">중고거래 피해 <br />대응 길잡이</h1>
+        <p class="tagline">사기인지 분쟁인지 먼저 가려, 어디로 가야 하는지 알려 드려요.</p>
+      </div>
+
+      <section class="guide-block">
+        <h2 class="guide-title">이렇게 써요</h2>
+        <ol class="howto">
+          <li>버튼으로 답하거나, 있었던 일을 그대로 적어요.</li>
+          <li>답에 맞춰 사기인지 분쟁인지 가려요. 누가 써도 같은 상황이면 같은 안내가 나와요.</li>
+          <li>먼저 갈 기관과 할 일, 증거 정리표를 받아요.</li>
+        </ol>
+      </section>
+
+      <section class="guide-block warn">
+        <h2 class="guide-title">이것만은 지켜 주세요</h2>
+        <p><strong>길잡이는 돈·비밀번호·인증번호를 절대 묻지 않아요.</strong> 365센터를 사칭해 돈을 요구하는 사기가 있었어요.</p>
+        <p>주민등록번호·비밀번호는 어떤 칸에도 적지 마세요.</p>
+      </section>
+
+      <section class="guide-block crisis-always" aria-label="마음이 힘들 때">
+        <p><strong>마음이 많이 힘드신가요?</strong> 자살예방 상담전화 <a href="tel:109">☎109</a> 에서 24시간 이야기를 들어 드려요.</p>
+      </section>
+
+      <section class="guide-block">
+        <h2 class="guide-title">상담원과 이야기하기</h2>
+        <p class="center-line"><a class="center-phone" href="tel:142235">☎ 142-235</a><span>평일 09:00~12:00 · 13:00~18:00</span></p>
+        <p class="muted small">카카오톡 「온라인피해365센터」 채널, 누리집 온라인상담 신청은 24시간 받아요(답변은 상담 시간에).</p>
+        <button type="button" class="btn ghost" id="btn-handoff">지금까지 정리한 내용 복사</button>
+        <p class="muted small" id="handoff-msg" aria-live="polite"></p>
+      </section>
+    </aside>
+
+    <!-- 대화 영역 -->
+    <main class="talk" id="main">
+      <div class="crisis-banner" id="crisis-banner" hidden role="alert">
+        <p class="crisis-title">혼자 견디지 마세요</p>
+        <p>지금 많이 힘드시다면 자살예방 상담전화 <a href="tel:109"><strong>☎109</strong></a> 에 먼저 연락해 주세요. 24시간 받아요. 위급하면 ☎112·☎119.</p>
+        <p class="small">통화한 뒤 원하시면, 아래에서 피해 상황 정리를 이어서 도와드릴게요.</p>
+      </div>
+
+      <div class="thread" id="thread" aria-live="polite"></div>
+
+      <form class="composer" id="composer" autocomplete="off">
+        <label for="free" class="sr-only">있었던 일 적기</label>
+        <textarea id="free" rows="2" maxlength="1000" placeholder="직접 적어도 돼요. 예) 입금했는데 안 오고 차단됨"></textarea>
+        <button type="submit" class="btn primary" id="send">보내기</button>
+      </form>
+      <p class="composer-note">적은 글은 AI가 사실만 정리하도록 보내요. 계좌번호·전화번호는 가려서 보내요. 저장하지 않아요.</p>
+
+      <section class="result" id="result" hidden></section>
+    </main>
+  </div>
+
+  <footer class="foot">
+    <p>이 안내는 법적 판단이 아닙니다. 공공행정 프로젝트 1조 시제품 · 안내 자료는 기관 공식 누리집과 법제처 생활법령정보를 바탕으로 했어요.</p>
+  </footer>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

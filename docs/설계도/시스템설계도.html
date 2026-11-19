@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>중고거래 피해 대응 길잡이 — 시스템 설계도</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* 색은 웹사이트(docs/디자인시스템/likelion.md)와 같다 */
+  :root { --paper:#F9FAFB; --ink:#191F28; --muted:#6B7583; --soft:#8A95A0; --accent:#FF6000; --link:#3D94FF; }
+  @page { size: A4 landscape; margin: 0; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--paper); color: var(--ink); font-family: 'Pretendard', sans-serif; }
+  .page { width: 297mm; height: 210mm; padding: 10mm 14mm 8mm; display: flex; flex-direction: column; }
+  .eyebrow { margin: 0; font: 500 8pt 'Geist Mono', monospace; letter-spacing: .14em; color: var(--accent); }
+  h1 { margin: 2mm 0 1mm; font-size: 20pt; font-weight: 800; letter-spacing: -0.3px; }
+  .sub { margin: 0 0 2mm; font-size: 10pt; color: var(--muted); }
+  svg { flex: 1; width: 100%; height: auto; }
+  .foot { margin: 0; font: 400 8pt 'Pretendard', sans-serif; color: var(--soft); border-top: 1px solid #E5E7EA; padding-top: 2mm; }
+</style>
+</head>
+<body>
+<div class="page">
+  <p class="eyebrow">SYSTEM OVERVIEW · <span style="font-family:Pretendard,sans-serif;letter-spacing:0">공공행정 프로젝트 1조</span></p>
+  <h1>중고거래 피해 대응 길잡이 — 시스템 설계도</h1>
+  <p class="sub">피해자가 답하면 화면이 바로 판단하고, 필요할 때만 서버가 AI·안내 자료·법령을 불러옵니다. 위에서 아래로 읽으세요.</p>
+
+<svg viewBox="0 0 1120 740" role="img" aria-labelledby="system-title system-desc" xmlns="http://www.w3.org/2000/svg">
+  <title id="system-title">중고거래 피해 대응 길잡이 시스템 설계도</title>
+  <desc id="system-desc">피해자가 길잡이 화면에서 답하면 화면 안의 판단 규칙이 사기·분쟁을 가려 결과를 보여 주고, 직접 쓴 글과 질문은 길잡이 서버가 열쇠 보관함의 키로 AI 비서(Claude, Groq, Gemini 순서), 안내 자료 창고, 법령 정보에 연결하는 구조를 보여 준다.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#6B7583"/></marker>
+    <marker id="arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#FF6000"/></marker>
+    <marker id="arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#3D94FF"/></marker>
+  </defs>
+  <rect width="1120" height="740" fill="#F9FAFB"/>
+
+  <!-- ───── 화살표 (상자보다 먼저) ───── -->
+  <!-- 피해자 → 화면 -->
+  <line x1="560" y1="104" x2="560" y2="164" stroke="#6B7583" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <rect x="568" y="124" width="112" height="16" rx="2" fill="#F9FAFB"/>
+  <text x="576" y="136" fill="#6B7583" font-size="12" font-family="Pretendard, sans-serif">버튼 · 직접 쓰기</text>
+
+  <!-- 화면 → 판단 규칙 -->
+  <line x1="440" y1="216" x2="364" y2="216" stroke="#FF6000" stroke-width="1.2" marker-end="url(#arrow-accent)"/>
+  <rect x="380" y="192" width="44" height="16" rx="2" fill="#F9FAFB"/>
+  <text x="402" y="204" fill="#6B7583" font-size="12" font-family="Pretendard, sans-serif" text-anchor="middle">분류</text>
+
+  <!-- 화면 → 결과 안내 -->
+  <line x1="680" y1="216" x2="756" y2="216" stroke="#6B7583" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <rect x="692" y="192" width="56" height="16" rx="2" fill="#F9FAFB"/>
+  <text x="720" y="204" fill="#6B7583" font-size="12" font-family="Pretendard, sans-serif" text-anchor="middle">보여 주기</text>
+
+  <!-- 화면 → 서버 -->
+  <line x1="560" y1="264" x2="560" y2="324" stroke="#6B7583" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <rect x="568" y="284" width="104" height="16" rx="2" fill="#F9FAFB"/>
+  <text x="576" y="296" fill="#6B7583" font-size="12" font-family="Pretendard, sans-serif">직접 쓴 글 · 질문</text>
+
+  <!-- 열쇠 보관함 → 서버 (점선) -->
+  <line x1="840" y1="376" x2="724" y2="376" stroke="#6B7583" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#arrow)"/>
+  <rect x="744" y="352" width="76" height="16" rx="2" fill="#F9FAFB"/>
+  <text x="782" y="364" fill="#6B7583" font-size="12" font-family="Pretendard, sans-serif" text-anchor="middle">키 꺼내 쓰기</text>
+
+  <!-- 서버 → AI 비서 -->
+  <path d="M480 424 V456 Q480 464 472 464 H248 Q240 464 240 472 V500" fill="none" stroke="#3D94FF" stroke-width="1.2" marker-end="url(#arrow-link)"/>
+  <rect x="300" y="440" width="104" height="16" rx="2" fill="#F9FAFB"/>
+  <text x="352" y="452" fill="#6B7583" font-size="12" font-family="Pretendard, sans-serif" text-anchor="middle">사실 정리 · 답변</text>
+
+  <!-- 서버 → 안내 자료 창고 -->
+  <line x1="560" y1="424" x2="560" y2="500" stroke="#6B7583" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <rect x="568" y="440" width="56" height="16" rx="2" fill="#F9FAFB"/>
+  <text x="572" y="452" fill="#6B7583" font-size="12" font-family="Pretendard, sans-serif">자료 찾기</text>
+
+  <!-- 서버 → 법령 정보 -->
+  <path d="M640 424 V456 Q640 464 648 464 H872 Q880 464 880 472 V500" fill="none" stroke="#3D94FF" stroke-width="1.2" marker-end="url(#arrow-link)"/>
+  <rect x="724" y="440" width="64" height="16" rx="2" fill="#F9FAFB"/>
+  <text x="756" y="452" fill="#6B7583" font-size="12" font-family="Pretendard, sans-serif" text-anchor="middle">최신 조문</text>
+
+  <!-- ───── 상자 ───── -->
+  <!-- ① 피해자 (이용자) -->
+  <rect x="440" y="40" width="240" height="64" rx="8" fill="#F9FAFB"/>
+  <rect x="440" y="40" width="240" height="64" rx="8" fill="rgba(107,117,131,0.10)" stroke="#8A95A0" stroke-width="1"/>
+  <text x="452" y="56" fill="#6B7583" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.08em">USER</text>
+  <text x="560" y="72" fill="#191F28" font-size="16" font-weight="700" font-family="Pretendard, sans-serif" text-anchor="middle">피해자</text>
+  <text x="560" y="92" fill="#6B7583" font-size="12" font-family="Pretendard, sans-serif" text-anchor="middle">휴대폰 · PC 브라우저</text>
+
+  <!-- ② 판단 규칙 (강조) -->
+  <rect x="120" y="168" width="240" height="96" rx="8" fill="#F9FAFB"/>
+  <rect x="120" y="168" width="240" height="96" rx="8" fill="#FFEFE5" stroke="#FF6000" stroke-width="1.2"/>
+  <text x="132" y="184" fill="#CC4D00" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.08em">RULES</text>
+  <text x="240" y="208" fill="#191F28" font-size="16" font-weight="700" font-family="Pretendard, sans-serif" text-anchor="middle">판단 규칙</text>
+  <text x="240" y="228" fill="#4E5967" font-size="12" font-family="Pretendard, sans-serif" text-anchor="middle">위기 단어 감지 · 사기/분쟁 분류</text>
+  <text x="240" y="248" fill="#4E5967" font-size="12" font-family="Pretendard, sans-serif" text-anchor="middle">AI 없이 화면에서 바로 판단</text>
+
+  <!-- ③ 길잡이 화면 -->
+  <rect x="440" y="168" width="240" height="96" rx="8" fill="#F9FAFB"/>
+  <rect x="440" y="168" width="240" height="96" rx="8" fill="#FFFFFF" stroke="#191F28" stroke-width="1"/>
+  <text x="452" y="184" fill="#4E5967" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.08em">SCREEN</text>
+  <text x="560" y="208" fill="#191F28" font-size="16" font-weight="700" font-family="Pretendard, sans-serif" text-anchor="middle">길잡이 화면</text>
+  <text x="560" y="228" fill="#4E5967" font-size="12" font-family="Pretendard, sans-serif" text-anchor="middle">질문 버튼 · 직접 쓰기 칸 · 묻기 칸</text>
+  <text x="560" y="248" fill="#8A95A0" font-size="12" font-family="'Geist Mono', monospace" text-anchor="middle">public/</text>
+
+  <!-- ④ 결과 안내 -->
+  <rect x="760" y="168" width="240" height="96" rx="8" fill="#F9FAFB"/>
+  <rect x="760" y="168" width="240" height="96" rx="8" fill="#FFFFFF" stroke="#191F28" stroke-width="1"/>
+  <text x="772" y="184" fill="#4E5967" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.08em">OUTPUT</text>
+  <text x="880" y="208" fill="#191F28" font-size="16" font-weight="700" font-family="Pretendard, sans-serif" text-anchor="middle">결과 안내</text>
+  <text x="880" y="228" fill="#4E5967" font-size="12" font-family="Pretendard, sans-serif" text-anchor="middle">할 일 · 갈 기관 · 증거 정리표</text>
+  <text x="880" y="248" fill="#4E5967" font-size="12" font-family="Pretendard, sans-serif" text-anchor="middle">정리표는 서버로 보내지 않음</text>
+
+  <!-- ⑤ 길잡이 서버 -->
+  <rect x="400" y="328" width="320" height="96" rx="8" fill="#F9FAFB"/>
+  <rect x="400" y="328" width="320" height="96" rx="8" fill="#FFFFFF" stroke="#191F28" stroke-width="1"/>
+  <text x="412" y="344" fill="#4E5967" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.08em">SERVER</text>
+  <text x="560" y="368" fill="#191F28" font-size="16" font-weight="700" font-family="Pretendard, sans-serif" text-anchor="middle">길잡이 서버 (Vercel)</text>
+  <text x="560" y="388" fill="#4E5967" font-size="12" font-family="Pretendard, sans-serif" text-anchor="middle">계좌·전화번호 가리기 → AI · 자료 · 법령 연결</text>
+  <text x="560" y="408" fill="#8A95A0" font-size="12" font-family="Pretendard, sans-serif" text-anchor="middle">api/ · 아무것도 저장하지 않음</text>
+
+  <!-- ⑥ 열쇠 보관함 (경계) -->
+  <rect x="840" y="328" width="200" height="96" rx="8" fill="#F9FAFB"/>
+  <rect x="840" y="328" width="200" height="96" rx="8" fill="rgba(255,96,0,0.05)" stroke="rgba(255,96,0,0.50)" stroke-width="1" stroke-dasharray="4,4"/>
+  <text x="852" y="344" fill="#CC4D00" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.08em">KEYS</text>
+  <text x="940" y="368" fill="#191F28" font-size="16" font-weight="700" font-family="Pretendard, sans-serif" text-anchor="middle">열쇠 보관함</text>
+  <text x="940" y="388" fill="#4E5967" font-size="12" font-family="Pretendard, sans-serif" text-anchor="middle">.env · Vercel 환경변수</text>
+  <text x="940" y="408" fill="#4E5967" font-size="12" font-family="Pretendard, sans-serif" text-anchor="middle">화면에는 키가 없음</text>
+
+  <!-- ⑦ AI 비서 (강조) -->
+  <rect x="120" y="504" width="240" height="104" rx="8" fill="#F9FAFB"/>
+  <rect x="120" y="504" width="240" height="104" rx="8" fill="#FFEFE5" stroke="#FF6000" stroke-width="1.2"/>
+  <text x="132" y="520" fill="#CC4D00" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.08em">AI</text>
+  <text x="240" y="544" fill="#191F28" font-size="16" font-weight="700" font-family="Pretendard, sans-serif" text-anchor="middle">AI 비서 (차례대로)</text>
+  <text x="240" y="564" fill="#4E5967" font-size="12" font-family="'Geist Mono', monospace" text-anchor="middle">Claude → Groq → Gemini</text>
+  <text x="240" y="584" fill="#4E5967" font-size="12" font-family="Pretendard, sans-serif" text-anchor="middle">글을 사실로 정리 · 자료로만 답</text>
+
+  <!-- ⑧ 안내 자료 창고 -->
+  <rect x="440" y="504" width="240" height="104" rx="8" fill="#F9FAFB"/>
+  <rect x="440" y="504" width="240" height="104" rx="8" fill="rgba(25,31,40,0.05)" stroke="#6B7583" stroke-width="1"/>
+  <text x="452" y="520" fill="#4E5967" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.08em">DOCS</text>
+  <text x="560" y="544" fill="#191F28" font-size="16" font-weight="700" font-family="Pretendard, sans-serif" text-anchor="middle">안내 자료 창고</text>
+  <text x="560" y="564" fill="#4E5967" font-size="12" font-family="Pretendard, sans-serif" text-anchor="middle">기관 공식 자료 조각 110개</text>
+  <text x="560" y="584" fill="#4E5967" font-size="12" font-family="Pretendard, sans-serif" text-anchor="middle">여기 있는 내용으로만 답함</text>
+
+  <!-- ⑨ 법령 정보 -->
+  <rect x="760" y="504" width="240" height="104" rx="8" fill="#F9FAFB"/>
+  <rect x="760" y="504" width="240" height="104" rx="8" fill="rgba(25,31,40,0.03)" stroke="rgba(25,31,40,0.30)" stroke-width="1"/>
+  <text x="772" y="520" fill="#4E5967" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.08em">LAW</text>
+  <text x="880" y="544" fill="#191F28" font-size="16" font-weight="700" font-family="Pretendard, sans-serif" text-anchor="middle">법령 정보 (법제처)</text>
+  <text x="880" y="564" fill="#4E5967" font-size="12" font-family="Pretendard, sans-serif" text-anchor="middle">형법 · 민법 · 특별법 조문</text>
+  <text x="880" y="584" fill="#4E5967" font-size="12" font-family="Pretendard, sans-serif" text-anchor="middle">입법예고는 아직 미연결</text>
+
+  <!-- 실패 대비 안내 -->
+  <text x="560" y="648" fill="#4E5967" font-size="12" font-style="italic" font-family="Pretendard, sans-serif" text-anchor="middle">AI나 법령 연결이 모두 실패하면, 미리 저장해 둔 「시연 값」으로 안내를 이어 갑니다.</text>
+
+  <!-- 범례 -->
+  <line x1="40" y1="676" x2="1080" y2="676" stroke="rgba(25,31,40,0.10)" stroke-width="0.8"/>
+  <text x="40" y="704" fill="#6B7583" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+  <rect x="120" y="692" width="24" height="16" rx="4" fill="#FFEFE5" stroke="#FF6000"/>
+  <text x="152" y="704" fill="#4E5967" font-size="12" font-family="Pretendard, sans-serif">핵심 장치</text>
+  <rect x="260" y="692" width="24" height="16" rx="4" fill="rgba(255,96,0,0.05)" stroke="rgba(255,96,0,0.50)" stroke-dasharray="4,4"/>
+  <text x="292" y="704" fill="#4E5967" font-size="12" font-family="Pretendard, sans-serif">비밀 보관(공개 안 됨)</text>
+  <line x1="460" y1="700" x2="496" y2="700" stroke="#6B7583" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <text x="504" y="704" fill="#4E5967" font-size="12" font-family="Pretendard, sans-serif">우리 서비스 안</text>
+  <line x1="620" y1="700" x2="656" y2="700" stroke="#3D94FF" stroke-width="1.2" marker-end="url(#arrow-link)"/>
+  <text x="664" y="704" fill="#4E5967" font-size="12" font-family="Pretendard, sans-serif">바깥 기관·회사 호출</text>
+  <line x1="812" y1="700" x2="848" y2="700" stroke="#6B7583" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#arrow)"/>
+  <text x="856" y="704" fill="#4E5967" font-size="12" font-family="Pretendard, sans-serif">키 꺼내 쓰기</text>
+</svg>
+
+  <p class="foot">2026-11-19 · 1차 완성본 기준 · AI는 사실 정리와 자료 기반 답변만 하고, 사기·분쟁 판단은 판단 규칙이 합니다 · 법적 판단이 아닌 안내</p>
+</div>
+</body>
+</html>
